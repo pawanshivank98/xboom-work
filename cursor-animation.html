@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cursor - AI Coding Tool</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+    }
+
+    .scene {
+      position: relative;
+      text-align: center;
+      animation: sceneIn 0.6s ease-out forwards;
+    }
+
+    /* Background glow pulse */
+    .bg-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+      animation: glowPulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Logo block */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: fadeUp 0.7s 0.2s ease-out forwards;
+    }
+
+    .logo-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+      animation: iconBounce 4s 0.5s ease-in-out infinite;
+    }
+
+    .logo-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+
+    .logo-name {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    /* Main headline */
+    .headline {
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      max-width: 700px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s 0.6s ease-out forwards;
+    }
+
+    .headline .highlight {
+      background: linear-gradient(90deg, #6366f1, #a78bfa, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s 1s ease-in-out infinite alternate;
+      background-size: 200%;
+    }
+
+    /* Stats row */
+    .stats {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      margin-top: 40px;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.1s ease-out forwards;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #a78bfa;
+      display: block;
+      animation: countUp 1.5s 1.4s ease-out both;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* Typing code block */
+    .code-block {
+      margin-top: 36px;
+      background: #13131a;
+      border: 1px solid #1f1f2e;
+      border-radius: 12px;
+      padding: 20px 28px;
+      text-align: left;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.5s ease-out forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .code-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #6366f1, #ec4899, #6366f1);
+      background-size: 200%;
+      animation: shimmer 2s 2s linear infinite;
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .dot-r { background: #ef4444; }
+    .dot-y { background: #f59e0b; }
+    .dot-g { background: #10b981; }
+
+    .code-line {
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #a78bfa;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0;
+      border-right: 2px solid #a78bfa;
+    }
+
+    .code-line:nth-child(2) { animation: typing 1.2s 2s steps(40) forwards; color: #6ee7b7; }
+    .code-line:nth-child(3) { animation: typing 1s 3s steps(35) forwards; color: #93c5fd; margin-top: 6px; }
+    .code-line:nth-child(4) {
+      animation: typing 0.8s 3.5s steps(30) forwards, cursorBlink 0.6s 3.5s step-end 5;
+      margin-top: 6px;
+    }
+
+    /* Bottom badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 36px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      background: rgba(99, 102, 241, 0.08);
+      color: #a78bfa;
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0;
+      animation: fadeUp 0.8s 2.2s ease-out forwards, badgePulse 2s 3s ease-in-out infinite;
+    }
+
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 1.5s 3s ease-in-out infinite;
+    }
+
+    /* Floating particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #6366f1;
+      opacity: 0;
+      animation: float var(--dur) var(--delay) ease-in-out infinite;
+    }
+
+    /* Keyframes */
+    @keyframes sceneIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    }
+
+    @keyframes iconBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0%; }
+      100% { background-position: 100%; }
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes typing {
+      to { width: 100%; }
+    }
+
+    @keyframes cursorBlink {
+      0%, 100% { border-color: #a78bfa; }
+      50% { border-color: transparent; }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.3); }
+      50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    @keyframes float {
+      0% { opacity: 0; transform: translateY(100vh) translateX(0); }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.3; }
+      100% { opacity: 0; transform: translateY(-10vh) translateX(var(--dx)); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating particles -->
+  <div class="particles" id="particles"></div>
+
+  <div class="scene">
+    <div class="bg-glow"></div>
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+      </div>
+      <span class="logo-name">Cursor</span>
+    </div>
+
+    <!-- Headline -->
+    <div class="headline">
+      The <span class="highlight">fastest-growing</span><br/>
+      AI coding tool in the world
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-number">10M+</span>
+        <span class="stat-label">Developers</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">180+</span>
+        <span class="stat-label">Countries</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">#1</span>
+        <span class="stat-label">AI Editor</span>
+      </div>
+    </div>
+
+    <!-- Code block -->
+    <div class="code-block">
+      <div class="code-dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="code-line">// AI writes code at the speed of thought</div>
+      <div class="code-line">const feature = await cursor.generate(prompt);</div>
+      <div class="code-line">await cursor.refactor(codebase, "optimize");</div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Powered by next-gen AI models
+    </div>
+  </div>
+
+  <script>
+    // Generate particles
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.setProperty('--dur', (4 + Math.random() * 6) + 's');
+      p.style.setProperty('--delay', (Math.random() * 4) + 's');
+      p.style.setProperty('--dx', (Math.random() * 100 - 50) + 'px');
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.background = ['#6366f1', '#a78bfa', '#ec4899', '#10b981'][Math.floor(Math.random() * 4)];
+      container.appendChild(p);
+    }
+  </script>
+
+</body>
+</html>
