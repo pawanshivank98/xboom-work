@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cursor — The Builders</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:  #ffffff;
+      --black:  #111111;
+      --coffee: #6f4e37;
+      --latte:  #c8a882;
+      --cream:  #f5efe8;
+      --espresso: #3b2314;
+    }
+
+    body {
+      background: var(--white);
+      color: var(--black);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(111,78,55,.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(200,168,130,.12) 0%, transparent 60%);
+      pointer-events: none;
+      animation: bgPulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      from { opacity: .6; }
+      to   { opacity: 1; }
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1.5px solid var(--latte);
+      color: var(--coffee);
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 2rem;
+      animation: fadeDown .8s ease both;
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -.03em;
+      animation: fadeDown .9s .1s ease both;
+    }
+
+    .hero-title span {
+      color: var(--coffee);
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-title span::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--latte);
+      border-radius: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: lineGrow 1s 1.2s ease forwards;
+    }
+
+    @keyframes lineGrow { to { transform: scaleX(1); } }
+
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 300;
+      color: #555;
+      max-width: 560px;
+      line-height: 1.7;
+      animation: fadeDown 1s .25s ease both;
+    }
+
+    .year-tag {
+      margin-top: 2.5rem;
+      font-size: 5rem;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 2px var(--latte);
+      letter-spacing: -.04em;
+      user-select: none;
+      animation: fadeDown 1s .4s ease both;
+      opacity: .35;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--coffee), var(--latte));
+      border-radius: 2px;
+      margin: 0 auto 4rem;
+      animation: expandW 1s 1s ease forwards;
+      transform-origin: center;
+      transform: scaleX(0);
+    }
+
+    @keyframes expandW { to { transform: scaleX(1); } }
+
+    /* ── Cards section ── */
+    .section {
+      padding: 0 2rem 6rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--coffee);
+      margin-bottom: 3rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--cream);
+      border-radius: 20px;
+      padding: 2.5rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .card.visible {
+      animation: cardIn .7s ease forwards;
+    }
+
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 24px 60px rgba(111,78,55,.18);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--coffee), var(--latte));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .4s ease;
+    }
+
+    .card:hover::before { transform: scaleX(1); }
+
+    .card-number {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--latte);
+      line-height: 1;
+      margin-bottom: 1.2rem;
+      transition: color .3s ease, -webkit-text-stroke .3s ease;
+    }
+
+    .card:hover .card-number {
+      color: var(--latte);
+      -webkit-text-stroke: 0;
+    }
+
+    .card-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: .4rem;
+    }
+
+    .card-role {
+      font-size: .82rem;
+      font-weight: 400;
+      color: var(--coffee);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .card-desc {
+      margin-top: 1rem;
+      font-size: .9rem;
+      color: #666;
+      line-height: 1.65;
+    }
+
+    /* ── Photo strip ── */
+    .photo-section {
+      padding: 4rem 2rem;
+      background: var(--cream);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-section::after {
+      content: 'CURSOR';
+      position: absolute;
+      font-size: 12vw;
+      font-weight: 900;
+      color: rgba(111,78,55,.06);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      white-space: nowrap;
+      pointer-events: none;
+      letter-spacing: -.04em;
+    }
+
+    .photo-wrapper {
+      display: inline-block;
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(59,35,20,.25);
+      max-width: 680px;
+      width: 100%;
+      animation: photoReveal 1.2s .3s ease both;
+    }
+
+    @keyframes photoReveal {
+      from { opacity: 0; transform: scale(.94) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .photo-wrapper img {
+      width: 100%;
+      display: block;
+    }
+
+    .photo-caption {
+      margin-top: 1.5rem;
+      font-size: .88rem;
+      color: var(--coffee);
+      font-style: italic;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 5rem 2rem 6rem;
+    }
+
+    .timeline h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .tl-item {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    .tl-item.visible { opacity: 1; transform: translateX(0); }
+
+    .tl-dot {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--coffee);
+      margin-top: 5px;
+      position: relative;
+    }
+
+    .tl-dot::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: calc(100% + 2rem);
+      background: var(--latte);
+    }
+
+    .tl-item:last-child .tl-dot::after { display: none; }
+
+    .tl-year {
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--coffee);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: .3rem;
+    }
+
+    .tl-text {
+      font-size: .95rem;
+      color: #444;
+      line-height: 1.65;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--espresso);
+      color: var(--latte);
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: .85rem;
+      letter-spacing: .05em;
+    }
+
+    footer strong { color: var(--white); }
+
+    /* ── Floating particles ── */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--latte);
+      opacity: 0;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0%   { transform: translateY(110vh) scale(0); opacity: 0; }
+      10%  { opacity: .25; }
+      90%  { opacity: .15; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="badge">Est. 2022 · San Francisco</div>
+  <h1 class="hero-title">Meet the team behind<br><span>Cursor</span></h1>
+  <p class="hero-sub">Four young builders who started a mission in 2022 and turned it into one of the hottest AI companies on the planet.</p>
+  <div class="year-tag">2022</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Photo -->
+<div class="photo-section">
+  <div class="photo-wrapper">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Cursor_founders.jpg/800px-Cursor_founders.jpg"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+         alt="Cursor Founders — Michael Truell, Aman Sanger, Sualeh Asif, Arvid Lunnemark" />
+    <div style="display:none; background:var(--cream); min-height:320px; align-items:center; justify-content:center; font-size:1rem; color:var(--coffee); padding:2rem; text-align:center;">
+      Michael Truell · Aman Sanger · Sualeh Asif · Arvid Lunnemark<br>
+      <span style="font-size:.8rem; margin-top:.5rem; display:block; opacity:.6;">City Hall, San Francisco</span>
+    </div>
+  </div>
+  <p class="photo-caption">Left to right: Aman Sanger · Michael Truell · Sualeh Asif · Arvid Lunnemark — San Francisco</p>
+</div>
+
+<!-- Team cards -->
+<div class="section" style="padding-top:5rem;">
+  <p class="section-label">The Founders</p>
+  <div class="grid" id="grid">
+
+    <div class="card">
+      <div class="card-number">01</div>
+      <div class="card-name">Michael Truell</div>
+      <div class="card-role">Co-founder & CEO</div>
+      <p class="card-desc">Drives Cursor's vision of making AI the most natural extension of a developer's mind.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-number">02</div>
+      <div class="card-name">Aman Sanger</div>
+      <div class="card-role">Co-founder</div>
+      <p class="card-desc">Shapes the product experience so that AI collaboration feels effortless and intuitive.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-number">03</div>
+      <div class="card-name">Sualeh Asif</div>
+      <div class="card-role">Co-founder</div>
+      <p class="card-desc">Builds the infrastructure and systems that power Cursor's lightning-fast AI responses.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-number">04</div>
+      <div class="card-name">Arvid Lunnemark</div>
+      <div class="card-role">Co-founder</div>
+      <p class="card-desc">Pioneering the deep code-understanding models that make Cursor smarter every day.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- Timeline -->
+<div class="timeline">
+  <h2>The Journey</h2>
+
+  <div class="tl-item">
+    <div class="tl-dot"></div>
+    <div>
+      <div class="tl-year">2022</div>
+      <p class="tl-text">Four friends leave school and start Anysphere, the company behind Cursor, with a bold belief: AI will fundamentally reshape how software is written.</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot"></div>
+    <div>
+      <div class="tl-year">2023</div>
+      <p class="tl-text">Cursor launches as an AI-first code editor built on VS Code. Developers instantly fall in love with its deep context awareness and tab-completion superpowers.</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot"></div>
+    <div>
+      <div class="tl-year">2024</div>
+      <p class="tl-text">Cursor reaches millions of users worldwide. Major funding rounds value Anysphere at over $2.5 billion, cementing its place as one of the fastest-growing dev tools ever.</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot"></div>
+    <div>
+      <div class="tl-year">2025 →</div>
+      <p class="tl-text">The mission continues — building the IDE of the future where AI and human creativity are inseparable.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  <p><strong>Cursor</strong> · Built by Anysphere · San Francisco, CA</p>
+  <p style="margin-top:.5rem; opacity:.6;">Four builders. One mission. Infinite possibilities.</p>
+</footer>
+
+<script>
+  // Floating particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 8 + 4;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      animation-duration:${Math.random()*12+10}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    container.appendChild(p);
+  }
+
+  // Intersection observer for cards & timeline
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const delay = Array.from(el.parentElement.children).indexOf(el) * 120;
+        setTimeout(() => el.classList.add('visible'), delay);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.card, .tl-item').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
