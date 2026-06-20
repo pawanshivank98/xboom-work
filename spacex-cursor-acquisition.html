@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpaceX × Cursor — $60B Acquisition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #ffffff;
+    color: #111111;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+    width: 1280px;
+    height: 720px;
+    position: relative;
+  }
+
+  /* Subtle grid */
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  /* Thin accent line top */
+  .top-rule {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #111 0%, #6B3A1F 50%, #111 100%);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  /* Header area */
+  .header {
+    position: absolute;
+    top: 42px;
+    left: 80px; right: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+  }
+
+  /* Brand logos */
+  .brands {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .brand-spacex {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #111;
+    text-transform: uppercase;
+  }
+  .brand-x {
+    font-size: 26px;
+    font-weight: 300;
+    color: #6B3A1F;
+    line-height: 1;
+  }
+  .brand-cursor {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #111;
+    text-transform: uppercase;
+  }
+  .cursor-block {
+    display: inline-block;
+    width: 10px;
+    height: 24px;
+    background: #111;
+    animation: blink 1s step-start infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .acquisition-badge {
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 3px;
+  }
+
+  /* Divider */
+  .divider {
+    position: absolute;
+    top: 108px;
+    left: 80px; right: 80px;
+    height: 1px;
+    background: #e0d5cc;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  /* Big number section */
+  .deal-section {
+    position: absolute;
+    top: 130px;
+    left: 80px;
+    width: 480px;
+    opacity: 0;
+  }
+  .deal-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #6B3A1F;
+    margin-bottom: 8px;
+  }
+  .deal-amount {
+    font-size: 100px;
+    font-weight: 900;
+    line-height: 1;
+    color: #111;
+    letter-spacing: -4px;
+  }
+  .deal-amount .dollar {
+    font-size: 60px;
+    font-weight: 300;
+    vertical-align: super;
+    letter-spacing: 0;
+    color: #6B3A1F;
+  }
+  .deal-amount .billion {
+    font-size: 48px;
+    font-weight: 300;
+    letter-spacing: 0;
+    color: #6B3A1F;
+  }
+  .deal-type {
+    font-size: 13px;
+    font-weight: 500;
+    color: #888;
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+  .deal-type span {
+    color: #6B3A1F;
+    font-weight: 700;
+  }
+
+  /* Vertical divider */
+  .v-line {
+    position: absolute;
+    top: 130px;
+    left: 600px;
+    width: 1px;
+    height: 360px;
+    background: #e0d5cc;
+    transform-origin: top;
+    transform: scaleY(0);
+  }
+
+  /* Right panel — chart */
+  .chart-panel {
+    position: absolute;
+    top: 130px;
+    left: 650px;
+    right: 80px;
+    bottom: 110px;
+    opacity: 0;
+  }
+  .chart-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #6B3A1F;
+    margin-bottom: 14px;
+  }
+  .chart-area {
+    position: relative;
+    height: 240px;
+  }
+
+  /* SVG bar chart */
+  .chart-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* Fact items below chart */
+  .facts {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .fact-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+  }
+  .fact-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: #f0ece8;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .fact-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: #111;
+    width: 0%;
+    transition: none;
+  }
+  .fact-row:nth-child(2) .fact-bar-fill { background: #6B3A1F; }
+  .fact-row:nth-child(3) .fact-bar-fill { background: #555; }
+  .fact-label { font-size: 11px; color: #666; width: 110px; text-align: right; letter-spacing: 0.3px; }
+  .fact-val   { font-size: 11px; font-weight: 700; color: #111; width: 52px; }
+
+  /* Stats row */
+  .stats-row {
+    position: absolute;
+    bottom: 30px;
+    left: 80px; right: 80px;
+    display: flex;
+    gap: 16px;
+    opacity: 0;
+  }
+  .stat-card {
+    flex: 1;
+    border: 1px solid #e0d5cc;
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #faf8f6;
+  }
+  .stat-num {
+    font-size: 26px;
+    font-weight: 900;
+    color: #111;
+    letter-spacing: -1px;
+  }
+  .stat-num.brown { color: #6B3A1F; }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #999;
+    margin-top: 3px;
+  }
+
+  /* Bottom source */
+  .source {
+    position: absolute;
+    bottom: 14px;
+    right: 80px;
+    font-size: 10px;
+    color: #bbb;
+    letter-spacing: 0.5px;
+    opacity: 0;
+  }
+
+  /* Left detail panel */
+  .detail-panel {
+    position: absolute;
+    top: 290px;
+    left: 80px;
+    width: 480px;
+    opacity: 0;
+  }
+  .detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0ece8;
+  }
+  .detail-item:last-child { border-bottom: none; }
+  .detail-icon {
+    width: 32px; height: 32px;
+    border-radius: 4px;
+    background: #111;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 15px;
+  }
+  .detail-icon.brown-bg { background: #6B3A1F; }
+  .detail-text strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    display: block;
+  }
+  .detail-text span {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="top-rule" id="topRule"></div>
+
+<!-- Header -->
+<div class="header" id="header">
+  <div class="brands">
+    <div class="brand-spacex">SpaceX</div>
+    <div class="brand-x">×</div>
+    <div class="brand-cursor"><div class="cursor-block"></div>Cursor</div>
+  </div>
+  <div class="acquisition-badge">Acquisition · 2026</div>
+</div>
+
+<div class="divider" id="divider"></div>
+
+<!-- Left: Big number -->
+<div class="deal-section" id="dealSection">
+  <div class="deal-label">All-Stock Deal Valuation</div>
+  <div class="deal-amount">
+    <span class="dollar">$</span><span id="bigNum">0</span><span class="billion">B</span>
+  </div>
+  <div class="deal-type">All-stock · Parent company: <span>Anysphere</span></div>
+</div>
+
+<!-- Left: Detail items -->
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-item">
+    <div class="detail-icon">🚀</div>
+    <div class="detail-text">
+      <strong>SpaceX acquires Anysphere</strong>
+      <span>Parent company of Cursor AI — the world's fastest-growing AI code editor with 48M+ active developers.</span>
+    </div>
+  </div>
+  <div class="detail-item">
+    <div class="detail-icon brown-bg">💰</div>
+    <div class="detail-text">
+      <strong>$60 Billion all-stock deal</strong>
+      <span>Largest AI developer-tools acquisition reported in 2026. Paid entirely in SpaceX equity.</span>
+    </div>
+  </div>
+  <div class="detail-item">
+    <div class="detail-icon">🛰️</div>
+    <div class="detail-text">
+      <strong>Strategic: AI for space engineering</strong>
+      <span>Cursor to power SpaceX's internal engineering workflows — from Starship design to Starlink software.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Vertical divider -->
+<div class="v-line" id="vLine"></div>
+
+<!-- Right: Chart panel -->
+<div class="chart-panel" id="chartPanel">
+  <div class="chart-title">Anysphere Valuation Journey ($B)</div>
+  <div class="chart-area">
+    <svg class="chart-svg" viewBox="0 0 510 220" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#111" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#111" stop-opacity="0.6"/>
+        </linearGradient>
+        <linearGradient id="barGrad2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#6B3A1F" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#6B3A1F" stop-opacity="0.6"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Gridlines -->
+      <line x1="0" y1="0"   x2="510" y2="0"   stroke="#f0ece8" stroke-width="1"/>
+      <line x1="0" y1="55"  x2="510" y2="55"  stroke="#f0ece8" stroke-width="1"/>
+      <line x1="0" y1="110" x2="510" y2="110" stroke="#f0ece8" stroke-width="1"/>
+      <line x1="0" y1="165" x2="510" y2="165" stroke="#f0ece8" stroke-width="1"/>
+      <line x1="0" y1="220" x2="510" y2="220" stroke="#e0d5cc" stroke-width="1"/>
+
+      <!-- Y labels -->
+      <text x="-6" y="4"   font-size="10" fill="#aaa" text-anchor="end">$60B</text>
+      <text x="-6" y="59"  font-size="10" fill="#aaa" text-anchor="end">$45B</text>
+      <text x="-6" y="114" font-size="10" fill="#aaa" text-anchor="end">$30B</text>
+      <text x="-6" y="169" font-size="10" fill="#aaa" text-anchor="end">$15B</text>
+      <text x="-6" y="224" font-size="10" fill="#aaa" text-anchor="end">$0</text>
+
+      <!-- Bars: heights scaled to 220px = $60B -->
+      <!-- 2022: $0.1B → ~0.4px, show as minimal -->
+      <rect id="bar0" x="20"  y="220" width="60" height="0" fill="url(#barGrad)" rx="3"/>
+      <text id="bl0" x="50"  y="222" font-size="9" fill="#aaa" text-anchor="middle">2022</text>
+      <!-- 2023: $0.4B → 1.5px → show 3 -->
+      <rect id="bar1" x="105" y="220" width="60" height="0" fill="url(#barGrad)" rx="3"/>
+      <text id="bl1" x="135" y="222" font-size="9" fill="#aaa" text-anchor="middle">2023</text>
+      <!-- 2024: $2.5B → 9.2px → show 9 -->
+      <rect id="bar2" x="190" y="220" width="60" height="0" fill="url(#barGrad)" rx="3"/>
+      <text id="bl2" x="220" y="222" font-size="9" fill="#aaa" text-anchor="middle">2024</text>
+      <!-- 2025: $9.9B → 36px -->
+      <rect id="bar3" x="275" y="220" width="60" height="0" fill="url(#barGrad)" rx="3"/>
+      <text id="bl3" x="305" y="222" font-size="9" fill="#aaa" text-anchor="middle">2025</text>
+      <!-- 2026 acq: $60B → 220px -->
+      <rect id="bar4" x="360" y="220" width="60" height="0" fill="url(#barGrad2)" rx="3"/>
+      <text id="bl4" x="390" y="222" font-size="9" fill="#6B3A1F" font-weight="700" text-anchor="middle">2026</text>
+
+      <!-- Value labels above bars (hidden initially) -->
+      <text id="bv0" x="50"  y="215" font-size="9"  fill="#111" text-anchor="middle" opacity="0">$0.1B</text>
+      <text id="bv1" x="135" y="215" font-size="9"  fill="#111" text-anchor="middle" opacity="0">$0.4B</text>
+      <text id="bv2" x="220" y="215" font-size="9"  fill="#111" text-anchor="middle" opacity="0">$2.5B</text>
+      <text id="bv3" x="305" y="215" font-size="9"  fill="#111" text-anchor="middle" opacity="0">$9.9B</text>
+      <text id="bv4" x="390" y="5"   font-size="11" fill="#6B3A1F" font-weight="700" text-anchor="middle" opacity="0">$60B ★</text>
+    </svg>
+  </div>
+
+  <!-- Horizontal fact bars -->
+  <div class="facts">
+    <div class="fact-row" id="fact0">
+      <div class="fact-label">Cursor MAU</div>
+      <div class="fact-bar-bg"><div class="fact-bar-fill" id="fb0" data-pct="80"></div></div>
+      <div class="fact-val">48M+</div>
+    </div>
+    <div class="fact-row" id="fact1">
+      <div class="fact-label">Deal premium</div>
+      <div class="fact-bar-bg"><div class="fact-bar-fill" id="fb1" data-pct="60"></div></div>
+      <div class="fact-val">6× rev</div>
+    </div>
+    <div class="fact-row" id="fact2">
+      <div class="fact-label">Countries</div>
+      <div class="fact-bar-bg"><div class="fact-bar-fill" id="fb2" data-pct="90"></div></div>
+      <div class="fact-val">180+</div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats row -->
+<div class="stats-row" id="statsRow">
+  <div class="stat-card">
+    <div class="stat-num" id="s1">$0B</div>
+    <div class="stat-label">Deal Size</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num brown" id="s2">0×</div>
+    <div class="stat-label">Value Growth Since 2022</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" id="s3">0M+</div>
+    <div class="stat-label">Active Developers</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num brown" id="s4">0%</div>
+    <div class="stat-label">All-Stock Deal</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" id="s5">0</div>
+    <div class="stat-label">Founded Year</div>
+  </div>
+</div>
+
+<div class="source" id="source">Source: Reuters · Bloomberg · 2026 · Illustrative</div>
+
+<script>
+// Bar data: actual heights in SVG units (220 = $60B)
+const barData = [
+  { id: 'bar0', h: 0.4,  val: 'bv0' },
+  { id: 'bar1', h: 1.5,  val: 'bv1' },
+  { id: 'bar2', h: 9.2,  val: 'bv2' },
+  { id: 'bar3', h: 36.3, val: 'bv3' },
+  { id: 'bar4', h: 220,  val: 'bv4' },
+];
+
+const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+// Top rule
+tl.to('#topRule', { scaleX: 1, duration: 0.7, ease: 'power2.inOut' }, 0)
+
+// Header
+  .to('#header', { opacity: 1, y: 0, duration: 0.6 }, 0.3)
+
+// Divider
+  .to('#divider', { scaleX: 1, duration: 0.6, ease: 'power2.inOut' }, 0.6)
+
+// Deal section (big number)
+  .to('#dealSection', { opacity: 1, duration: 0.5 }, 0.8)
+  .add(() => {
+    // Animate big number
+    gsap.to({ v: 0 }, {
+      v: 60, duration: 2.2, ease: 'power2.out',
+      onUpdate: function() {
+        const v = this.targets()[0].v;
+        document.getElementById('bigNum').textContent = v < 10
+          ? v.toFixed(1)
+          : Math.round(v);
+      }
+    });
+  }, 0.9)
+
+// Vertical line
+  .to('#vLine', { scaleY: 1, duration: 0.7, ease: 'power2.inOut' }, 0.8)
+
+// Chart panel
+  .to('#chartPanel', { opacity: 1, duration: 0.5 }, 1.0)
+
+// Animate bars one by one
+  .add(() => {
+    barData.forEach((b, i) => {
+      const el = document.getElementById(b.id);
+      const vl = document.getElementById(b.val);
+      const delay = i * 0.18;
+      gsap.to(el, {
+        attr: { y: 220 - b.h, height: b.h },
+        duration: 0.7,
+        delay,
+        ease: 'power2.out',
+        onComplete: () => {
+          gsap.to(vl, { opacity: 1, duration: 0.3 });
+        }
+      });
+      // Move x-labels below
+      const bl = document.getElementById('bl' + i);
+      gsap.to(bl, { attr: { y: 220 + 12 }, duration: 0 });
+    });
+  }, 1.2)
+
+// Detail panel
+  .to('#detailPanel', { opacity: 1, duration: 0.5 }, 1.6)
+
+// Fact rows
+  .add(() => {
+    ['fact0','fact1','fact2'].forEach((id, i) => {
+      gsap.to('#' + id, { opacity: 1, duration: 0.4, delay: i * 0.12 });
+      const fb = document.getElementById('fb' + i);
+      const pct = fb.dataset.pct + '%';
+      gsap.to(fb, { width: pct, duration: 0.9, delay: i * 0.12, ease: 'power2.out' });
+    });
+  }, 2.0)
+
+// Stats row
+  .to('#statsRow', { opacity: 1, duration: 0.5 }, 2.4)
+  .add(() => {
+    countUp('#s1', 0, 60,   1.6, v => '$' + Math.round(v) + 'B');
+    countUp('#s2', 0, 600,  1.6, v => Math.round(v) + '×');
+    countUp('#s3', 0, 48,   1.6, v => Math.round(v) + 'M+');
+    countUp('#s4', 0, 100,  1.6, v => Math.round(v) + '%');
+    countUp('#s5', 0, 2022, 1.6, v => Math.round(v));
+  }, 2.4)
+
+  .to('#source', { opacity: 1, duration: 0.4 }, 3.2);
+
+function countUp(sel, from, to, dur, fmt) {
+  const el = document.querySelector(sel);
+  gsap.to({ v: from }, {
+    v: to, duration: dur, ease: 'power1.out',
+    onUpdate: function() { el.textContent = fmt(this.targets()[0].v); }
+  });
+}
+</script>
+</body>
+</html>
