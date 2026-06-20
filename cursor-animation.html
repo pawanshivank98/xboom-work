@@ -5,89 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cursor - AI Coding Tool</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: #0a0a0f;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       overflow: hidden;
     }
 
-    .scene {
-      position: relative;
-      text-align: center;
-      animation: sceneIn 0.6s ease-out forwards;
+    /* ── Page wrapper ── */
+    .page {
+      width: 960px;
+      max-width: 96vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      opacity: 0;
+      animation: fadeIn 0.5s 0.1s ease-out forwards;
     }
 
-    /* Background glow pulse */
-    .bg-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
-      animation: glowPulse 4s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    /* Logo block */
+    /* ── Top: Logo centred ── */
     .logo-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 14px;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       opacity: 0;
-      transform: translateY(-20px);
-      animation: fadeUp 0.7s 0.2s ease-out forwards;
+      transform: translateY(-16px);
+      animation: fadeUp 0.6s 0.3s ease-out forwards;
     }
 
     .logo-icon {
-      width: 52px;
-      height: 52px;
+      width: 48px; height: 48px;
       background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
-      animation: iconBounce 4s 0.5s ease-in-out infinite;
+      border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 28px rgba(99,102,241,0.55);
+      animation: iconBounce 3.6s 0.8s ease-in-out infinite;
     }
 
-    .logo-icon svg {
-      width: 28px;
-      height: 28px;
-      fill: white;
-    }
+    .logo-icon svg { width: 26px; height: 26px; fill: #fff; }
 
     .logo-name {
-      font-size: 2rem;
+      font-size: 1.9rem;
       font-weight: 700;
       color: #fff;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.4px;
     }
 
-    /* Main headline */
+    /* ── Two-column body ── */
+    .body-row {
+      display: flex;
+      align-items: stretch;
+      gap: 32px;
+      width: 100%;
+    }
+
+    /* ── LEFT column ── */
+    .left-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
     .headline {
-      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-size: clamp(1.5rem, 2.6vw, 2.2rem);
       font-weight: 800;
-      color: #ffffff;
-      line-height: 1.2;
-      max-width: 700px;
+      color: #fff;
+      line-height: 1.25;
       opacity: 0;
-      transform: translateY(20px);
-      animation: fadeUp 0.8s 0.6s ease-out forwards;
+      transform: translateY(16px);
+      animation: fadeUp 0.7s 0.7s ease-out forwards;
     }
 
     .headline .highlight {
@@ -95,450 +90,466 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: gradientShift 3s 1s ease-in-out infinite alternate;
       background-size: 200%;
+      animation: gradientShift 3s 1.2s ease-in-out infinite alternate;
     }
 
-    /* Stats row */
+    /* Stats */
     .stats {
       display: flex;
-      gap: 40px;
-      justify-content: center;
-      margin-top: 40px;
+      gap: 0;
       opacity: 0;
-      animation: fadeUp 0.8s 1.1s ease-out forwards;
+      animation: fadeUp 0.7s 1.0s ease-out forwards;
     }
 
     .stat {
+      flex: 1;
       text-align: center;
+      padding: 14px 8px;
+      background: #13131a;
+      border: 1px solid #1f1f2e;
     }
+    .stat:first-child { border-radius: 10px 0 0 10px; }
+    .stat:last-child  { border-radius: 0 10px 10px 0; border-left: none; }
+    .stat:not(:first-child):not(:last-child) { border-left: none; }
 
     .stat-number {
-      font-size: 2rem;
+      display: block;
+      font-size: 1.6rem;
       font-weight: 800;
       color: #a78bfa;
-      display: block;
-      animation: countUp 1.5s 1.4s ease-out both;
+      animation: countUp 0.8s 1.3s ease-out both;
     }
 
     .stat-label {
-      font-size: 0.78rem;
+      font-size: 0.68rem;
       color: #6b7280;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
-    /* Typing code block */
+    /* Code block */
     .code-block {
-      margin-top: 36px;
       background: #13131a;
       border: 1px solid #1f1f2e;
-      border-radius: 12px;
-      padding: 20px 28px;
+      border-radius: 10px;
+      padding: 16px 20px;
       text-align: left;
-      opacity: 0;
-      animation: fadeUp 0.8s 1.5s ease-out forwards;
       position: relative;
       overflow: hidden;
+      opacity: 0;
+      animation: fadeUp 0.7s 1.4s ease-out forwards;
     }
 
     .code-block::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, #6366f1, #ec4899, #6366f1);
       background-size: 200%;
       animation: shimmer 2s 2s linear infinite;
     }
 
-    .code-dots {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
-    .dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-    }
+    .code-dots { display: flex; gap: 5px; margin-bottom: 12px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
     .dot-r { background: #ef4444; }
     .dot-y { background: #f59e0b; }
     .dot-g { background: #10b981; }
 
     .code-line {
       font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      color: #a78bfa;
+      font-size: 0.82rem;
       white-space: nowrap;
       overflow: hidden;
       width: 0;
-      border-right: 2px solid #a78bfa;
+      border-right: 2px solid transparent;
     }
-
-    .code-line:nth-child(2) { animation: typing 1.2s 2s steps(40) forwards; color: #6ee7b7; }
-    .code-line:nth-child(3) { animation: typing 1s 3s steps(35) forwards; color: #93c5fd; margin-top: 6px; }
+    .code-line:nth-child(2) { animation: typing 1.1s 2.0s steps(42) forwards; color: #6ee7b7; }
+    .code-line:nth-child(3) { animation: typing 1.0s 3.0s steps(38) forwards; color: #93c5fd; margin-top: 5px; }
     .code-line:nth-child(4) {
-      animation: typing 0.8s 3.5s steps(30) forwards, cursorBlink 0.6s 3.5s step-end 5;
-      margin-top: 6px;
+      animation: typing 0.7s 3.5s steps(32) forwards, cursorBlink 0.5s 3.5s step-end 6;
+      margin-top: 5px;
     }
 
-    /* Bottom badge */
+    /* Badge */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: 36px;
-      padding: 10px 22px;
+      align-self: flex-start;
+      padding: 9px 18px;
       border-radius: 999px;
-      border: 1px solid rgba(99, 102, 241, 0.4);
-      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99,102,241,0.35);
+      background: rgba(99,102,241,0.08);
       color: #a78bfa;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
       opacity: 0;
-      animation: fadeUp 0.8s 2.2s ease-out forwards, badgePulse 2s 3s ease-in-out infinite;
+      animation: fadeUp 0.7s 2.0s ease-out forwards, badgePulse 2s 3s ease-in-out infinite;
     }
 
     .badge-dot {
-      width: 8px; height: 8px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       background: #10b981;
       animation: pulse 1.5s 3s ease-in-out infinite;
     }
 
-    /* Growth Graph */
-    .graph-wrap {
-      margin-top: 32px;
+    /* ── RIGHT column — Graph ── */
+    .right-col {
+      width: 420px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
       opacity: 0;
-      transform: translateY(20px);
-      animation: fadeUp 0.8s 1.8s ease-out forwards;
+      transform: translateY(16px);
+      animation: fadeUp 0.7s 1.1s ease-out forwards;
     }
 
-    .graph-title {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #6b7280;
-      margin-bottom: 12px;
-    }
-
-    .graph-container {
+    .graph-card {
       background: #13131a;
       border: 1px solid #1f1f2e;
       border-radius: 12px;
-      padding: 20px 24px 14px;
+      padding: 18px 20px 14px;
       position: relative;
       overflow: hidden;
-      width: 480px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
-    .graph-container::before {
+    .graph-card::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, #10b981, #6366f1, #ec4899);
     }
 
+    .graph-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .graph-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    .graph-peak-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #10b981;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      border-radius: 6px;
+      padding: 3px 8px;
+      white-space: nowrap;
+      opacity: 0;
+      animation: fadeIn 0.4s 3.8s ease-out forwards;
+    }
+
+    /* Graph body: Y-labels + SVG side by side */
+    .graph-body {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+    }
+
     .graph-labels-y {
-      position: absolute;
-      left: 10px;
-      top: 20px;
-      bottom: 36px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: flex-end;
+      padding-bottom: 2px;
     }
 
     .graph-labels-y span {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       color: #4b5563;
       font-family: monospace;
+      line-height: 1;
     }
 
-    .graph-area {
-      margin-left: 34px;
-      height: 120px;
-      position: relative;
+    .graph-svg-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .graph-svg {
       width: 100%;
-      height: 100%;
+      height: 130px;
+      display: block;
       overflow: visible;
     }
 
-    /* Animated path draw */
+    .graph-labels-x {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .graph-labels-x span {
+      font-size: 0.58rem;
+      color: #4b5563;
+      font-family: monospace;
+    }
+
+    /* SVG elements */
     .growth-line {
       fill: none;
       stroke: url(#lineGradient);
       stroke-width: 2.5;
       stroke-linecap: round;
       stroke-linejoin: round;
-      stroke-dasharray: 600;
-      stroke-dashoffset: 600;
-      animation: drawLine 1.8s 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      stroke-dasharray: 620;
+      stroke-dashoffset: 620;
+      animation: drawLine 1.8s 2.0s cubic-bezier(0.4,0,0.2,1) forwards;
     }
 
     .growth-fill {
       opacity: 0;
-      animation: fillFade 0.6s 3.8s ease-out forwards;
+      animation: fillFade 0.7s 3.7s ease-out forwards;
     }
 
     .data-dot {
       opacity: 0;
-      animation: dotPop 0.4s ease-out forwards;
+      animation: dotPop 0.35s ease-out forwards;
     }
 
-    .graph-labels-x {
-      display: flex;
-      justify-content: space-between;
-      margin-left: 34px;
-      margin-top: 6px;
-    }
-
-    .graph-labels-x span {
-      font-size: 0.6rem;
-      color: #4b5563;
-      font-family: monospace;
-    }
-
-    .graph-peak-label {
-      position: absolute;
-      top: -18px;
-      right: 0;
-      font-size: 0.7rem;
-      color: #10b981;
-      font-weight: 700;
-      opacity: 0;
-      animation: fadeUp 0.5s 3.6s ease-out forwards;
-    }
-
-    @keyframes drawLine {
-      to { stroke-dashoffset: 0; }
-    }
-
-    @keyframes fillFade {
-      to { opacity: 1; }
-    }
+    /* ── Keyframes ── */
+    @keyframes fadeIn  { to { opacity: 1; } }
+    @keyframes fadeUp  { to { opacity: 1; transform: translateY(0); } }
+    @keyframes drawLine { to { stroke-dashoffset: 0; } }
+    @keyframes fillFade { to { opacity: 1; } }
 
     @keyframes dotPop {
-      0% { opacity: 0; transform: scale(0); }
-      70% { transform: scale(1.4); }
+      0%   { opacity: 0; transform: scale(0); }
+      70%  { transform: scale(1.5); }
       100% { opacity: 1; transform: scale(1); }
-    }
-
-    /* Floating particles */
-    .particles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .particle {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      border-radius: 50%;
-      background: #6366f1;
-      opacity: 0;
-      animation: float var(--dur) var(--delay) ease-in-out infinite;
-    }
-
-    /* Keyframes */
-    @keyframes sceneIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes glowPulse {
-      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
     }
 
     @keyframes iconBounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+      50%       { transform: translateY(-5px); }
     }
 
     @keyframes gradientShift {
-      0% { background-position: 0%; }
+      0%   { background-position: 0%; }
       100% { background-position: 100%; }
     }
 
     @keyframes countUp {
-      from { opacity: 0; transform: scale(0.7); }
-      to { opacity: 1; transform: scale(1); }
+      from { opacity: 0; transform: scale(0.6); }
+      to   { opacity: 1; transform: scale(1); }
     }
 
-    @keyframes typing {
-      to { width: 100%; }
-    }
+    @keyframes typing { to { width: 100%; } }
 
     @keyframes cursorBlink {
       0%, 100% { border-color: #a78bfa; }
-      50% { border-color: transparent; }
+      50%       { border-color: transparent; }
     }
 
     @keyframes shimmer {
-      0% { background-position: -200% center; }
-      100% { background-position: 200% center; }
+      0%   { background-position: -200% center; }
+      100% { background-position:  200% center; }
     }
 
     @keyframes badgePulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.3); }
-      50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.3); }
+      50%       { box-shadow: 0 0 0 7px rgba(99,102,241,0); }
     }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.4); }
+      50%       { opacity: 0.4; transform: scale(1.5); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); }
+      50%       { opacity: 0.9; transform: translate(-50%,-50%) scale(1.12); }
     }
 
     @keyframes float {
-      0% { opacity: 0; transform: translateY(100vh) translateX(0); }
-      10% { opacity: 0.6; }
-      90% { opacity: 0.3; }
+      0%   { opacity: 0; transform: translateY(100vh) translateX(0); }
+      10%  { opacity: 0.5; }
+      90%  { opacity: 0.25; }
       100% { opacity: 0; transform: translateY(-10vh) translateX(var(--dx)); }
+    }
+
+    /* Background glow */
+    .bg-glow {
+      position: fixed;
+      top: 50%; left: 50%;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%);
+      animation: glowPulse 4s ease-in-out infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Particles */
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+    .particle {
+      position: absolute;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      opacity: 0;
+      animation: float var(--dur) var(--delay) ease-in-out infinite;
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating particles -->
+  <div class="bg-glow"></div>
   <div class="particles" id="particles"></div>
 
-  <div class="scene">
-    <div class="bg-glow"></div>
+  <div class="page">
 
     <!-- Logo -->
     <div class="logo-wrap">
       <div class="logo-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       </div>
       <span class="logo-name">Cursor</span>
     </div>
 
-    <!-- Headline -->
-    <div class="headline">
-      The <span class="highlight">fastest-growing</span><br/>
-      AI coding tool in the world
-    </div>
+    <!-- Two-column body -->
+    <div class="body-row">
 
-    <!-- Stats -->
-    <div class="stats">
-      <div class="stat">
-        <span class="stat-number">10M+</span>
-        <span class="stat-label">Developers</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">180+</span>
-        <span class="stat-label">Countries</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">#1</span>
-        <span class="stat-label">AI Editor</span>
-      </div>
-    </div>
+      <!-- LEFT: headline · stats · code · badge -->
+      <div class="left-col">
 
-    <!-- Code block -->
-    <div class="code-block">
-      <div class="code-dots">
-        <div class="dot dot-r"></div>
-        <div class="dot dot-y"></div>
-        <div class="dot dot-g"></div>
-      </div>
-      <div class="code-line">// AI writes code at the speed of thought</div>
-      <div class="code-line">const feature = await cursor.generate(prompt);</div>
-      <div class="code-line">await cursor.refactor(codebase, "optimize");</div>
-    </div>
-
-    <!-- Growth Graph -->
-    <div class="graph-wrap">
-      <div class="graph-title">User Growth &mdash; Jan 2023 to Jun 2025</div>
-      <div class="graph-container">
-        <div class="graph-labels-y">
-          <span>10M</span>
-          <span>7.5M</span>
-          <span>5M</span>
-          <span>2.5M</span>
-          <span>0</span>
+        <div class="headline">
+          The <span class="highlight">fastest-growing</span><br>
+          AI coding tool in the world
         </div>
-        <div class="graph-area">
-          <span class="graph-peak-label">10M+ users</span>
-          <svg class="graph-svg" viewBox="0 0 420 120" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#6366f1"/>
-                <stop offset="50%" stop-color="#a78bfa"/>
-                <stop offset="100%" stop-color="#10b981"/>
-              </linearGradient>
-              <linearGradient id="fillGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#6366f1" stop-opacity="0.35"/>
-                <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <!-- Grid lines -->
-            <line x1="0" y1="0"   x2="420" y2="0"   stroke="#1f1f2e" stroke-width="1"/>
-            <line x1="0" y1="30"  x2="420" y2="30"  stroke="#1f1f2e" stroke-width="1"/>
-            <line x1="0" y1="60"  x2="420" y2="60"  stroke="#1f1f2e" stroke-width="1"/>
-            <line x1="0" y1="90"  x2="420" y2="90"  stroke="#1f1f2e" stroke-width="1"/>
-            <line x1="0" y1="120" x2="420" y2="120" stroke="#1f1f2e" stroke-width="1"/>
-            <!-- Fill area -->
-            <path class="growth-fill" fill="url(#fillGradient)"
-              d="M0,118 C30,116 60,114 90,110 C130,104 160,96 200,82 C240,66 270,46 310,26 C340,12 370,4 420,0 L420,120 L0,120 Z"/>
-            <!-- Growth line -->
-            <path class="growth-line"
-              d="M0,118 C30,116 60,114 90,110 C130,104 160,96 200,82 C240,66 270,46 310,26 C340,12 370,4 420,0"/>
-            <!-- Data dots -->
-            <circle class="data-dot" cx="0"   cy="118" r="4" fill="#6366f1" style="animation-delay:2.3s; transform-origin:0px 118px"/>
-            <circle class="data-dot" cx="90"  cy="110" r="4" fill="#6366f1" style="animation-delay:2.7s; transform-origin:90px 110px"/>
-            <circle class="data-dot" cx="200" cy="82"  r="4" fill="#a78bfa" style="animation-delay:3.1s; transform-origin:200px 82px"/>
-            <circle class="data-dot" cx="310" cy="26"  r="4" fill="#10b981" style="animation-delay:3.5s; transform-origin:310px 26px"/>
-            <circle class="data-dot" cx="420" cy="0"   r="5" fill="#10b981" style="animation-delay:3.9s; transform-origin:420px 0px; filter:drop-shadow(0 0 6px #10b981)"/>
-          </svg>
-        </div>
-        <div class="graph-labels-x">
-          <span>Jan'23</span>
-          <span>Jul'23</span>
-          <span>Jan'24</span>
-          <span>Jul'24</span>
-          <span>Jun'25</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- Badge -->
-    <div class="badge">
-      <span class="badge-dot"></span>
-      Powered by next-gen AI models
-    </div>
-  </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-number">10M+</span>
+            <span class="stat-label">Developers</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">180+</span>
+            <span class="stat-label">Countries</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">#1</span>
+            <span class="stat-label">AI Editor</span>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-dots">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+          </div>
+          <div class="code-line">// AI writes code at the speed of thought</div>
+          <div class="code-line">const feature = await cursor.generate(prompt);</div>
+          <div class="code-line">await cursor.refactor(codebase, "optimize");</div>
+        </div>
+
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Powered by next-gen AI models
+        </div>
+
+      </div><!-- /left-col -->
+
+      <!-- RIGHT: growth graph -->
+      <div class="right-col">
+        <div class="graph-card">
+
+          <div class="graph-header">
+            <div class="graph-title">User Growth<br>Jan 2023 — Jun 2025</div>
+            <div class="graph-peak-tag">↑ 10M+ users</div>
+          </div>
+
+          <div class="graph-body">
+
+            <div class="graph-labels-y">
+              <span>10M</span>
+              <span>7.5M</span>
+              <span>5M</span>
+              <span>2.5M</span>
+              <span>0</span>
+            </div>
+
+            <div class="graph-svg-wrap">
+              <svg class="graph-svg" viewBox="0 0 360 130" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stop-color="#6366f1"/>
+                    <stop offset="50%"  stop-color="#a78bfa"/>
+                    <stop offset="100%" stop-color="#10b981"/>
+                  </linearGradient>
+                  <linearGradient id="fillGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stop-color="#6366f1" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Grid -->
+                <line x1="0" y1="0"   x2="360" y2="0"   stroke="#1f1f2e" stroke-width="1"/>
+                <line x1="0" y1="32"  x2="360" y2="32"  stroke="#1f1f2e" stroke-width="1"/>
+                <line x1="0" y1="65"  x2="360" y2="65"  stroke="#1f1f2e" stroke-width="1"/>
+                <line x1="0" y1="98"  x2="360" y2="98"  stroke="#1f1f2e" stroke-width="1"/>
+                <line x1="0" y1="130" x2="360" y2="130" stroke="#1f1f2e" stroke-width="1"/>
+
+                <!-- Fill -->
+                <path class="growth-fill" fill="url(#fillGradient)"
+                  d="M0,128 C30,126 55,124 80,120 C110,114 140,105 175,90 C210,74 235,52 270,28 C295,12 320,4 360,0 L360,130 L0,130 Z"/>
+
+                <!-- Line -->
+                <path class="growth-line"
+                  d="M0,128 C30,126 55,124 80,120 C110,114 140,105 175,90 C210,74 235,52 270,28 C295,12 320,4 360,0"/>
+
+                <!-- Dots -->
+                <circle class="data-dot" cx="0"   cy="128" r="4" fill="#6366f1" style="animation-delay:2.1s; transform-origin:0px 128px"/>
+                <circle class="data-dot" cx="80"  cy="120" r="4" fill="#6366f1" style="animation-delay:2.5s; transform-origin:80px 120px"/>
+                <circle class="data-dot" cx="175" cy="90"  r="4" fill="#a78bfa" style="animation-delay:3.0s; transform-origin:175px 90px"/>
+                <circle class="data-dot" cx="270" cy="28"  r="4" fill="#10b981" style="animation-delay:3.5s; transform-origin:270px 28px"/>
+                <circle class="data-dot" cx="360" cy="0"   r="5" fill="#10b981" style="animation-delay:3.9s; transform-origin:360px 0px; filter:drop-shadow(0 0 5px #10b981)"/>
+              </svg>
+
+              <div class="graph-labels-x">
+                <span>Jan'23</span>
+                <span>Jul'23</span>
+                <span>Jan'24</span>
+                <span>Jul'24</span>
+                <span>Jun'25</span>
+              </div>
+            </div>
+
+          </div><!-- /graph-body -->
+        </div><!-- /graph-card -->
+      </div><!-- /right-col -->
+
+    </div><!-- /body-row -->
+  </div><!-- /page -->
 
   <script>
-    // Generate particles
     const container = document.getElementById('particles');
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 28; i++) {
       const p = document.createElement('div');
       p.className = 'particle';
-      p.style.setProperty('--dur', (4 + Math.random() * 6) + 's');
+      p.style.setProperty('--dur',   (4 + Math.random() * 6) + 's');
       p.style.setProperty('--delay', (Math.random() * 4) + 's');
-      p.style.setProperty('--dx', (Math.random() * 100 - 50) + 'px');
+      p.style.setProperty('--dx',    (Math.random() * 100 - 50) + 'px');
       p.style.left = Math.random() * 100 + 'vw';
-      p.style.background = ['#6366f1', '#a78bfa', '#ec4899', '#10b981'][Math.floor(Math.random() * 4)];
+      p.style.background = ['#6366f1','#a78bfa','#ec4899','#10b981'][Math.floor(Math.random()*4)];
       container.appendChild(p);
     }
   </script>
-
 </body>
 </html>
