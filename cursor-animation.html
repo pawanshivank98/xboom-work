@@ -208,6 +208,129 @@
       animation: pulse 1.5s 3s ease-in-out infinite;
     }
 
+    /* Growth Graph */
+    .graph-wrap {
+      margin-top: 32px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s 1.8s ease-out forwards;
+    }
+
+    .graph-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .graph-container {
+      background: #13131a;
+      border: 1px solid #1f1f2e;
+      border-radius: 12px;
+      padding: 20px 24px 14px;
+      position: relative;
+      overflow: hidden;
+      width: 480px;
+    }
+
+    .graph-container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #10b981, #6366f1, #ec4899);
+    }
+
+    .graph-labels-y {
+      position: absolute;
+      left: 10px;
+      top: 20px;
+      bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .graph-labels-y span {
+      font-size: 0.6rem;
+      color: #4b5563;
+      font-family: monospace;
+    }
+
+    .graph-area {
+      margin-left: 34px;
+      height: 120px;
+      position: relative;
+    }
+
+    .graph-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    /* Animated path draw */
+    .growth-line {
+      fill: none;
+      stroke: url(#lineGradient);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: drawLine 1.8s 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .growth-fill {
+      opacity: 0;
+      animation: fillFade 0.6s 3.8s ease-out forwards;
+    }
+
+    .data-dot {
+      opacity: 0;
+      animation: dotPop 0.4s ease-out forwards;
+    }
+
+    .graph-labels-x {
+      display: flex;
+      justify-content: space-between;
+      margin-left: 34px;
+      margin-top: 6px;
+    }
+
+    .graph-labels-x span {
+      font-size: 0.6rem;
+      color: #4b5563;
+      font-family: monospace;
+    }
+
+    .graph-peak-label {
+      position: absolute;
+      top: -18px;
+      right: 0;
+      font-size: 0.7rem;
+      color: #10b981;
+      font-weight: 700;
+      opacity: 0;
+      animation: fadeUp 0.5s 3.6s ease-out forwards;
+    }
+
+    @keyframes drawLine {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes fillFade {
+      to { opacity: 1; }
+    }
+
+    @keyframes dotPop {
+      0% { opacity: 0; transform: scale(0); }
+      70% { transform: scale(1.4); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
     /* Floating particles */
     .particles {
       position: fixed;
@@ -338,6 +461,61 @@
       <div class="code-line">// AI writes code at the speed of thought</div>
       <div class="code-line">const feature = await cursor.generate(prompt);</div>
       <div class="code-line">await cursor.refactor(codebase, "optimize");</div>
+    </div>
+
+    <!-- Growth Graph -->
+    <div class="graph-wrap">
+      <div class="graph-title">User Growth &mdash; Jan 2023 to Jun 2025</div>
+      <div class="graph-container">
+        <div class="graph-labels-y">
+          <span>10M</span>
+          <span>7.5M</span>
+          <span>5M</span>
+          <span>2.5M</span>
+          <span>0</span>
+        </div>
+        <div class="graph-area">
+          <span class="graph-peak-label">10M+ users</span>
+          <svg class="graph-svg" viewBox="0 0 420 120" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="50%" stop-color="#a78bfa"/>
+                <stop offset="100%" stop-color="#10b981"/>
+              </linearGradient>
+              <linearGradient id="fillGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6366f1" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="0" y1="0"   x2="420" y2="0"   stroke="#1f1f2e" stroke-width="1"/>
+            <line x1="0" y1="30"  x2="420" y2="30"  stroke="#1f1f2e" stroke-width="1"/>
+            <line x1="0" y1="60"  x2="420" y2="60"  stroke="#1f1f2e" stroke-width="1"/>
+            <line x1="0" y1="90"  x2="420" y2="90"  stroke="#1f1f2e" stroke-width="1"/>
+            <line x1="0" y1="120" x2="420" y2="120" stroke="#1f1f2e" stroke-width="1"/>
+            <!-- Fill area -->
+            <path class="growth-fill" fill="url(#fillGradient)"
+              d="M0,118 C30,116 60,114 90,110 C130,104 160,96 200,82 C240,66 270,46 310,26 C340,12 370,4 420,0 L420,120 L0,120 Z"/>
+            <!-- Growth line -->
+            <path class="growth-line"
+              d="M0,118 C30,116 60,114 90,110 C130,104 160,96 200,82 C240,66 270,46 310,26 C340,12 370,4 420,0"/>
+            <!-- Data dots -->
+            <circle class="data-dot" cx="0"   cy="118" r="4" fill="#6366f1" style="animation-delay:2.3s; transform-origin:0px 118px"/>
+            <circle class="data-dot" cx="90"  cy="110" r="4" fill="#6366f1" style="animation-delay:2.7s; transform-origin:90px 110px"/>
+            <circle class="data-dot" cx="200" cy="82"  r="4" fill="#a78bfa" style="animation-delay:3.1s; transform-origin:200px 82px"/>
+            <circle class="data-dot" cx="310" cy="26"  r="4" fill="#10b981" style="animation-delay:3.5s; transform-origin:310px 26px"/>
+            <circle class="data-dot" cx="420" cy="0"   r="5" fill="#10b981" style="animation-delay:3.9s; transform-origin:420px 0px; filter:drop-shadow(0 0 6px #10b981)"/>
+          </svg>
+        </div>
+        <div class="graph-labels-x">
+          <span>Jan'23</span>
+          <span>Jul'23</span>
+          <span>Jan'24</span>
+          <span>Jul'24</span>
+          <span>Jun'25</span>
+        </div>
+      </div>
     </div>
 
     <!-- Badge -->
