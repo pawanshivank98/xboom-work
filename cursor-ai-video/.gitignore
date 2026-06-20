@@ -1,0 +1,3 @@
+# Render output — PNG sequences are large intermediate artifacts
+renders/*/
+!renders/*.mp4
